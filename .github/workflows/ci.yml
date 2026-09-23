@@ -1,0 +1,57 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download repository code
+        uses: actions/checkout@v4
+
+      - name: Compile C++ unit tests
+        run: g++ -std=c++17 -Wall -Wextra -o run_tests tests/test_attendance.cpp src/attendance.cpp
+
+      - name: Run C++ unit tests
+        run: ./run_tests
+
+      - name: Install WebAssembly toolchain
+        run: sudo apt-get update && sudo apt-get install -y clang lld
+
+      - name: Build C++ into WebAssembly
+        run: >
+          clang++ --target=wasm32 -O2 -std=c++17 -ffreestanding
+          -fno-exceptions -fno-rtti -nostdlib
+          -Wl,--no-entry
+          -Wl,--export=wasm_percentage
+          -Wl,--export=wasm_can_miss
+          -Wl,--export=wasm_need_recover
+          -o web/attendance.wasm
+          src/attendance.cpp src/wasm_api.cpp
+
+      - name: Package website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build-and-test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
