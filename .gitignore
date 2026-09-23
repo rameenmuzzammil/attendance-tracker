@@ -1,0 +1,6 @@
+# Build outputs (CI rebuilds these)
+web/attendance.wasm
+run_tests
+run_tests.exe
+*.exe
+*.o

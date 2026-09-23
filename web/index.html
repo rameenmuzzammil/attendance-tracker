@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attendance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Set the theme before the page draws, so it does not flash the wrong colours.
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem("attendance-tracker-theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        var wantsDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        theme = wantsDark ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div class="masthead-top">
+        <h1>Attendance Tracker</h1>
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false">Dark mode</button>
+      </div>
+      <p>Add your subjects and see how many classes you can still miss.</p>
+    </header>
+
+    <div id="banner" class="banner" role="alert" hidden></div>
+
+    <section class="panel" aria-labelledby="rule-heading">
+      <h2 id="rule-heading">Minimum attendance</h2>
+      <div class="rule-row">
+        <label for="required">Required percentage</label>
+        <input id="required" type="number" min="1" max="100" value="75" inputmode="numeric">
+        <span class="unit">%</span>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="add-heading">
+      <h2 id="add-heading">Add a subject</h2>
+      <form id="add-form" class="add-form" novalidate>
+        <div class="field wide">
+          <label for="name">Subject name</label>
+          <input id="name" type="text" maxlength="40" placeholder="Software Engineering" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="held">Classes held</label>
+          <input id="held" type="number" min="0" value="0" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="attended">Classes attended</label>
+          <input id="attended" type="number" min="0" value="0" inputmode="numeric">
+        </div>
+        <button type="submit" class="primary">Add subject</button>
+      </form>
+      <p id="form-error" class="form-error" role="alert"></p>
+    </section>
+
+    <section aria-labelledby="subjects-heading">
+      <h2 id="subjects-heading" class="section-title">Your subjects</h2>
+      <p id="empty" class="empty">No subjects yet. Add your first subject above.</p>
+      <ul id="subject-list" class="subject-list"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
