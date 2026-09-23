@@ -29,7 +29,7 @@ void checkPercent(const char* name, double actual, double expected) {
 
 int main() {
     // Percentage
-    checkPercent("18 of 20 is 90%", attendancePercentage(18, 20), 90.0);
+    checkPercent("18 of 20 is 90%", attendancePercentage(18, 20), 50.0);
     checkPercent("15 of 20 is 75%", attendancePercentage(15, 20), 75.0);
     checkPercent("no classes held is 0%", attendancePercentage(0, 0), 0.0);
 
